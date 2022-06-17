@@ -2,7 +2,7 @@ const joi = require('joi')
 
 const title = joi.string().required()
 const channel_id = joi.number().integer().min(1).required()
-const channel_id2 = joi.number().integer().min(1)
+const channel_id2 = joi.number().integer().min(1) //搜索时不一定提供
 const content = joi.string().required().allow('')
 const status = joi.number().integer().min(1)
 const read_count = joi.number().integer()
@@ -27,21 +27,21 @@ exports.add_article_schema = {
   }
 }
 
-exports.search_article_schema = {
-  body: {
-    channel_id: channel_id2,
-    status,
-    begin_pubdate: pubdate,
-    end_pubdate: pubdate
-  }
-}
-
-// exports.list_article_schema = {
+// exports.search_article_schema = {
 //   query: {
-//     cate_id: cate_id_optional,
-//     state: state_optional
+//     channel_id: channel_id2,
+//     status,
+//     begin_pubdate: pubdate,
+//     end_pubdate: pubdate
 //   }
 // }
+
+exports.list_article_schema = {
+  query: {
+    channel_id: channel_id2,
+    status,
+  }
+}
 
 exports.del_article_schema = {
   params: {
