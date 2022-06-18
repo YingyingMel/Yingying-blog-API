@@ -40,7 +40,7 @@ exports.listArticle = (req, res) => {
       status: req.query.status,
       channel_id: req.query.channel_id
     }
-    const sql = 'select * from articles where status =? and channel_id=?'
+    const sql = 'select * from articles where status =? or channel_id=?'
     db.query(sql, [searchParams.status, searchParams.channel_id], (err, results) => {
       if (err) return res.cc(err, 500)
       if (results.length > 0) {
@@ -114,7 +114,7 @@ exports.editArticle = (req, res) => {
   // }
   const articleinfo = {
     ...req.body,
-    pub_date: new Date(),
+    pub_date: moment().format('DD-MM-YYYY'),
   }
 
   const sql = 'update articles set ? where id = ?'

@@ -24,89 +24,6 @@ action="http://geek.itheima.net/v1_0/upload"
 
 这是前端页面跳转，不用改history.push('./login')
 
-```js
-//**获取后端article数据**
-useEffect(() => {
-    const loadList = async () => {
-      const res = await http.get('/mp/articles', { params })
-      const { results, total_count } = res.data
-      setAticleData({
-        list: results,
-        count: total_count
-      })
-    }
-    loadList()
-  }, [params])
-
-//删除文章
-  const delArticle = async (data) => {
-    //console.log(data) //先打印看看能否收集到的文章id
-    await http.delete(`/mp/articles/${data.id}`)
-    // 更新列表
-    setParams({
-      page: 1,
-      per_page: 10
-    })
-  }
-  
-  if (articleId) {
-      //编辑修改
-      await http.put(`/mp/articles/${articleId}?draft=false`, params)
-    } else {
-      //新增发布
-      await http.post('/mp/articles?draft=false', params)
-    }
-  
-//根据路由id参数判断发布or编辑
-useEffect(() => {
-    const loadDetail = async () => {
-      const res = await http.get(`/mp/articles/${articleId}`)
-      const { cover, ...formValue } = res.data
-      form.current.setFieldsValue({ ...formValue, type: cover.type })
-      const imageList = cover.images.map(url => ({ url }))
-      setFileList(imageList)
-      setImaCount(cover.type)
-      fileListRef.current = imageList
-//封面        
-{imaCount > 0 && (
-              <Upload
-                name="image"
-                listType="picture-card"
-                className="avatar-uploader"
-                showUploadList
-                action="http://geek.itheima.net/v1_0/upload"
-                fileList={fileList}
-                onChange={onUploadChange} //上传后有服务器的信息返回
-                multiple={imaCount > 1}
-                maxCount={imaCount}
-              >
-                    
- //获取频道列表, 因为layout页面用{ observer } from 'mobx-react-lite'与store绑定，要记得去layout页面导入,并放入useEffect首次加载中
-  loadChannelList = async () => {
-    const res = await http.get('/channels')
-
-//调用登录接口
-    const res = await http.post('http://geek.itheima.net/v1_0/authorizations', {
-      mobile,
-      code
-    })
-    
-getUserInfo = async () => {
-    //调用接口获取user信息
-    const res = await http.get('/user/profile')
-    //console.log(res)
-    this.userInfo = res.data
-  }
-
-//请求后端的baseURL
-const http = axios.create({
-  baseURL: 'http://geek.itheima.net/v1_0',
-  timeout: 5000
-})
-```
-
-
-
 todolist 还有db.json
 
 ```js
@@ -144,6 +61,8 @@ npm init -y
    npm i jsonwebtoken@8.5.1
 
    npm i multer@1.4.2
+   
+   npm i moment
 
 
 
@@ -601,3 +520,34 @@ return <img src={img404} width={200} height={150} alt="" />
 前端article/index.js, 加载文章列表时返回的res截图
 
 ![image-20220617125459491](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220617125459491.png)
+
+图片上传调用黑马接口，
+
+```js
+//提交表单到服务器，图片转成字符串
+const onFinish = async (values) => { //values包含了所有提交的数据，通过各个标签的name来关联获取。要先对数据提取和格式化，再发送后端
+    const { channel_id, content, title } = values
+    const params = {
+      channel_id: channel_id,
+      content: content,
+      title: title,
+      images: JSON.stringify(fileList) //把fileList里的图片对象转成字符串发给服务器
+    }
+    
+//信息回填时，图片转成对象格式
+  useEffect(() => {
+    const loadDetail = async () => {
+      const res = await http.get(`/my/article/${articleId}`)
+      console.log(res)
+      const { images, ...formValue } = res.data.data
+      form.current.setFieldsValue({ ...formValue })//数据回填
+      //把服务器发回的图片字符串转回对象格式，存到fileList
+      setFileList(JSON.parse(images))
+      console.log(JSON.parse(images))
+    }
+    if (articleId) {
+      loadDetail()
+    }
+  }, [articleId])
+```
+

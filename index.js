@@ -8,6 +8,7 @@ const userinfoRouter = require('./router/userInfo')
 const channelsRouter = require('./router/channels')
 const articleRouter = require('./router/articles')
 const uploadfileRouter = require('./router/uploadfile')
+const todolistRouter = require('./router/todolist')
 
 //创建服务器实例
 const app = express()
@@ -47,6 +48,7 @@ app.use('/my', userinfoRouter)//获取用户信息，注意：以 /my 开头的�
 app.use('/my', channelsRouter) //channels路由
 app.use('/my/article', articleRouter)//文章路由
 app.use('/api', uploadfileRouter)//上传文件路由
+app.use('/todolist', todolistRouter)
 
 //定义错误级别中间件
 app.use((err, req, res, next) => {
