@@ -1,32 +1,29 @@
-const multer = require("multer")
-const path = require("path")
+const db = require('../db/index')
+const fs = require('fs')
 
-module.exports = (req, res, next) => {
-  let fullPath = path.resolve(__dirname + "/attachment")
-  let filename = ""
-  let storage = multer.diskStorage({
-    //设置文件存储路径
-    destination: (req, file, cb) => {
-      cb(null, fullPath)
-    },
-    //设置文件存储名称
-    filename: (req, file, cb) => {
-      let extname = path.extname(file.originalname)
-      filename = file.fieldname + "-" + Date.now() + extname
-      cb(null, filename)
-    }
+//把图片写入数据库，存入地址
+exports.uploadImg = (req, res) => {
+  const file = req.file
+  fs.renameSync('./uploads/' + file.filename, './uploads/' + file.originalname)
+  //console.log(file)
+  res.set({
+    'content-type': 'application/JSON; charset=utf-8'
   })
-  //上传单张图片
-  let upload = multer({ storage }).single("photo")
-  upload(req, res, (err) => {
-    if (err instanceof multer.MulterError) {
-      res.send("multererr:" + err)
-    } else if (err) {
-      res.send("err:" + err)
-    } else {
-      //上传成功后，将图片写在req.body.photo中，继续住下执行
-      req.body.photo = filename
-      next()
-    }
+  const images = 'http://localhost:3007/uploads/' + file.originalname
+
+  const imageUrl = {
+    images: images
+  }
+
+  const sql = 'insert into images set ?'
+  db.query(sql, imageUrl, (err, results) => {
+    if (err) return res.cc(err, 500)
+    if (results.affectedRows !== 1) return res.cc('上传失败', 400)
+    res.send({
+      status: 200,
+      msg: '上传成功',
+      url: imageUrl.images,
+    })
+
   })
 }

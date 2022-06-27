@@ -16,7 +16,8 @@ const app = express()
 
 // 托管静态资源文件
 app.use('/uploads', express.static('./uploads'))
-//是否要把前端放过来？app.use(express.static('./web'))
+//是否要把前端放过来？
+//app.use(express.static('./web'))
 
 //解决跨域
 app.use(cors())

@@ -3,13 +3,9 @@ const path = require('path')
 const moment = require('moment')
 
 
-//增
+//增, 返回的req.body里有图片的url
 exports.addArticle = (req, res) => {
-  //图片非必选项
-  // 手动校验上传的文件
-  // if (!req.file || req.file.fieldname !== 'cover_img') {
-  //   return res.cc('文章封面必选')
-  // }
+
   const timeNow = moment().format('DD-MM-YYYY')
   const articleinfo = {
     ...req.body,
@@ -27,11 +23,6 @@ exports.addArticle = (req, res) => {
 
   })
 }
-
-
-// `select a.id, a.title, a.pub_date, a.status, b.name as cate_name
-// from articles as a,channels as b 
-// where a.channel_id = b.id and a.channel_id = ifnull(?, a.channel_id)  and a.status = ifnull(?, a.status) limit ?,?`
 
 //查， 获取文章列表
 exports.listArticle = (req, res) => {
@@ -107,11 +98,6 @@ exports.queryArticleDetail = (req, res) => {
 
 //改
 exports.editArticle = (req, res) => {
-  //封面非必选
-  // 手动校验上传的文件
-  // if (!req.file || req.file.fieldname !== 'cover_img') {
-  //   return res.cc('文章封面必选')
-  // }
   const articleinfo = {
     ...req.body,
     pub_date: moment().format('DD-MM-YYYY'),

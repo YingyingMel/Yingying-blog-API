@@ -6,7 +6,7 @@ const { addArticle, listArticle, delArticle, editArticle, queryArticleDetail, se
 const expressJOI = require('@escook/express-joi')
 const { add_article_schema, del_article_schema, eidt_article_schema, search_article_schema } = require('../schema/articles')
 
-//不需要上传图片了，借用黑马接口传图片
+//不需要在这里上传图片，上传图片已单独抽离到uploadfile
 // 解析有文件的form-data表单数据
 // const multer = require('multer')
 // const path = require('path')

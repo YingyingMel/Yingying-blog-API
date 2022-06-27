@@ -551,3 +551,117 @@ const onFinish = async (values) => { //values包含了所有提交的数据，�
   }, [articleId])
 ```
 
+发送请求时是url带参数，则请求时是params, 端口接收是req.query, 
+
+发送的请求体是body时，端口接收是req.body
+
+#### 重写图片上传功能，调用本地接口
+
+新建一张表，用于存放图片url
+
+![image-20220627144729572](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220627144729572.png)
+
+在/router 和/router_handler下分别新建uploadfile.js
+
+在index.js里新建路由, 用api端口可以免除携带token上传
+
+```js
+app.use('/api', uploadfileRouter)//上传文件路由
+```
+
+在/router/uploadfile.js里新建路由
+
+```js
+const express = require('express')
+const router = express.Router()
+const { uploadImg } = require('../router_handler/uploadfile')
+
+//重写图片
+const multer = require('multer')
+const upload = multer({ dest: './uploads/' }).single("images")
+
+router.post('/upload', upload, uploadImg)
+
+module.exports = router
+```
+
+/router_handler/uploadfile.js，把上传文件重命名，把url写入数据库, 并把url返回前端
+
+```js
+const db = require('../db/index')
+const fs = require('fs')
+
+//把图片写入数据库，存入地址
+exports.uploadImg = (req, res) => {
+  const file = req.file
+  fs.renameSync('./uploads/' + file.filename, './uploads/' + file.originalname)
+  //console.log(file)
+  res.set({
+    'content-type': 'application/JSON; charset=utf-8'
+  })
+  const images = 'http://localhost:3007/uploads/' + file.originalname
+
+  const imageUrl = {
+    images: images
+  }
+
+  const sql = 'insert into images set ?'
+  db.query(sql, imageUrl, (err, results) => {
+    if (err) return res.cc(err, 500)
+    if (results.affectedRows !== 1) return res.cc('上传失败', 400)
+    res.send({
+      status: 200,
+      msg: '上传成功',
+      url: imageUrl.images,
+    })
+
+  })
+}
+```
+
+前端要更改的地方：
+
+\publish\index.js里，图片请求接口更改为blog后端
+
+![image-20220627150511567](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220627150511567.png)
+
+onUploadChange事件里的url提取要修改，
+
+上传存在本地服务器的图片截图
+
+![image-20220627134706686](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220627134706686.png)
+
+```js
+ const onUploadChange = ({ fileList }) => { //直接从res中解构fileList
+    console.log(fileList)
+    const formatList = fileList.map(file => {
+      //上传完毕，提取数据
+      if (file.response) {
+        return {
+          url: file.response.url //提取response里的url,其他信息不要，看上面截图
+        }
+      }
+      //否则在上传中，不做处理
+      return file
+    })
+    console.log(formatList)
+    setFileList(formatList)
+  }
+```
+
+/article/.index.js里渲染cover时
+
+```js
+{
+      title: 'Cover',
+      dataIndex: 'images',
+      render: images => { //下面src地址要根据后端返回数据提取url，看下面res截图
+        //console.log(JSON.parse(images))
+        return <img src={JSON.parse(images) ? JSON.parse(images)[0].url : img404} width={80} height={60} alt="" />
+      }
+    },
+```
+
+console.log(JSON.parse(images)
+
+![image-20220627140938960](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220627140938960.png)

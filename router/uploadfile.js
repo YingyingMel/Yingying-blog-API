@@ -1,17 +1,12 @@
 const express = require('express')
-
 const router = express.Router()
-const uploadFile = require('../router_handler/uploadfile')
+const { uploadImg } = require('../router_handler/uploadfile')
 
-// 解析有文件的form-data表单数据
 
-router.post('/upload', uploadFile, (req, res) => {
-  console.log(req.body)
-  res.status(200).send({
-    status: 200,
-    msg: '上传成功',
-    data: req.body
-  })
-})
+//重写图片
+const multer = require('multer')
+const upload = multer({ dest: './uploads/' }).single("images")
+
+router.post('/upload', upload, uploadImg)
 
 module.exports = router
