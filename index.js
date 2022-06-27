@@ -63,6 +63,12 @@ app.use((err, req, res, next) => {
   res.cc(err, 400)
 })
 
-app.listen(3007, () => {
-  console.log("server is running at http://127.0.0.1:3007")
+// app.listen(3007, () => {
+//   console.log("server is running at http://127.0.0.1:3007")
+// })
+
+const PORT = process.env.PORT || 8080
+app.listen(PORT, () => {
+  console.log(`App listening on port ${PORT}`)
+  console.log('Press Ctrl+C to quit.')
 })
