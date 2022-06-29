@@ -665,3 +665,42 @@ onUploadChange事件里的url提取要修改，
 console.log(JSON.parse(images)
 
 ![image-20220627140938960](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220627140938960.png)
+
+
+
+#### deploy to heroku
+
+1. 先注册heroku账号
+
+2. 全局安装heroku , 在已写好的项目根目录， npm install -g heroku
+
+3. 验证heroku安装成功： heroku --version
+
+4. 在heroku网站新建一个repository, 命名 blog-yy-server
+
+5. 回到项目根目录bash终端,连接heroku 账号：heroku login
+
+   ![image-20220628162749134](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220628162749134.png)
+
+6. 把本地项目和远程项目关联：heroku git:remote -a blog-yy-server
+
+7. 根目录新建一个文件：Procfile， 里面输入 web: node index.js
+
+8. 在package.json里，scripts第一行，“start": "node index.js"
+
+9. index.js 里的server监听：
+
+   ```js
+   // Start the server
+   const PORT = process.env.PORT || 8080;
+   app.listen(PORT, () => {
+     console.log(`App listening on port ${PORT}`);
+     console.log('Press Ctrl+C to quit.');
+   });
+   ```
+
+9. 把写好的server项目 添加暂存区，git add .
+10. git commit -am "备注信息"
+11. 每次更新推送到heroku:   git push heroku master
+12. 结束后打开终端提供的链接验证，也可在网页项目右上角more -> view logs
+
