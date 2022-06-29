@@ -9,7 +9,7 @@ exports.uploadImg = (req, res) => {
   res.set({
     'content-type': 'application/JSON; charset=utf-8'
   })
-  const images = 'http://localhost:3007/uploads/' + file.originalname
+  const images = 'https://blog-yy-server.herokuapp.com/uploads/' + file.originalname
 
   const imageUrl = {
     images: images

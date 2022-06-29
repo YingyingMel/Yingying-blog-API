@@ -700,7 +700,30 @@ console.log(JSON.parse(images)
    ```
 
 9. 把写好的server项目 添加暂存区，git add .
+
 10. git commit -am "备注信息"
+
 11. 每次更新推送到heroku:   git push heroku master
+
 12. 结束后打开终端提供的链接验证，也可在网页项目右上角more -> view logs
+
+    
+
+连接mysql 
+
+按照原来的数据库在新建的数据库里新建表，仔细核对表的设置
+
+修改数据库端口
+
+![image-20220629170340651](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220629170340651.png)
+
+修改图片存储地址：router_handler/uploadfile.js
+
+![image-20220629170551050](C:\Users\yingy\AppData\Roaming\Typora\typora-user-images\image-20220629170551050.png)
+
+
+
+后记得把server保存并 push到heroku,
+
+把前端上传图片action 请求地址更改：https://blog-yy-server.herokuapp.com/api/upload
 
